@@ -65,12 +65,17 @@ int *codeur(int valeurN, int message[], int tailleDuMessage, int *volt, int *vio
 		}
 	}
 	return tmpMessage;
+	free(tmpMessage);
 }
 
-int decodeur()
+int *decodeur(int ValeurN, int MessageCoD[], int tailleDuMessage)
 {
+	int *tmpMessage = malloc(sizeof(int) * tailleDuMessage);
+	int nbZeros = 0;
+	
+	
 	printf("En cours de création ...");
-	return 1;
+	return tmpMessage;
 }
 
 int main()
