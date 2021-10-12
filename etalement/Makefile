@@ -1,14 +1,14 @@
 
-etalement : etalement.o hadamard.o
-	gcc etalement.o hadamard.o -o etalement
+testEtal : testEtal.o hadamard.o
+	gcc testEtal.o hadamard.o -o testEtal
 
-etalement.o : etalement.c
-	gcc -c etalement.c -o etalement.o
+testEtal.o : testEtal.c 
+	gcc -c testEtal.c -o testEtal.o
 
 hadamard.o : hadamard.c hadamard.h
 	gcc -c hadamard.c -o hadamard.o
 
-all : etalement
+all : testEtal
 
 clean : 
 	rm *.o
