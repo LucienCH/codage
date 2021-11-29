@@ -8,9 +8,9 @@ int NombreUtilisateurs();
 int NombreEtapes(int nombreUtilisateur);
 
 // genere la matrice d'hadamard
-int** CreerMatrice(int nbUser, int* taille_mat);
+int* CreerMatrice(int tailleMatrice);
 
-void afficher_matrice(int taille, int** matrice_Hadamard);
+void afficher_matrice(int taille, int* matrice_Hadamard);
 
 
 #endif

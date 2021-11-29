@@ -33,13 +33,13 @@ int NombreEtapes(int nombreUtilisateurs){ // N = 2^p
     return nbEtapes;
 }
 
-void afficher_matrice(int taille, int** matrice_Hadamard){
+void afficher_matrice(int taille, int* matrice_Hadamard){
     printf("Affichage de la matrice : \n\n");
     printf("Taille de la matrice : %dx%d \n",taille,taille);
 
     for(int i=0; i < taille;i++){
       for (int j=0; j < taille; j++) {
-          printf("|  %d  ",matrice_Hadamard[i][j]); 
+          printf("|  %d  ",matrice_Hadamard[i + j]); 
       }
         printf("|\n" );
     }
@@ -68,57 +68,93 @@ int** inverser_matrice(int ** mat_a_inverser, int taille, int** matrice_sortie){
     return matrice_sortie;
 }
 
-int** CreerMatrice(int nbUser, int* taille_mat){
-    int** mat;
-    int** petite_matrice; //matrice initiale
-    int** matrice_temp;
-    int nInit = 1;
-    int taille = NombreEtapes(nbUser);
-    *taille_mat = taille;
+int * AllocHadamard(int tailleMatrice){
+    int* mat;
 
-    if((petite_matrice = malloc(sizeof(*mat))) == NULL){
-        printf("Erreur d'allocation de mémoire pour petite matrice ...\n");
+    if((mat = malloc(sizeof(int*) * tailleMatrice)) == (int *)-1 ){
+        printf("Erreur dans l'allocation de la matrice d'Hadamard \n");
         exit(0);
+    }else{
+        printf("Allocation de la mémoire réussie ... \n");
+        for(int i = 0; i < tailleMatrice; i++){
+            for(int j = 0; j < tailleMatrice; j++){
+                mat[i + j] = 0;
+            }
+        }
+
+        // printf("Init reussie \n");
     }
 
-    if((petite_matrice[0] = malloc(sizeof(*mat))) == NULL){
-        printf("Erreur d'allocation de mémoire pour petite matrice ...\n");
-        exit(0);
-    }
-    petite_matrice[0][0]=1;
-
-    if((matrice_temp = malloc(sizeof(*matrice_temp) * taille)) == NULL){
-        printf("Erreur d'allocation de mémoire pour petite matrice ...\n");
-        exit(0);
-    }
-
-    if((mat = malloc(sizeof(*mat)* taille)) == NULL){
-        printf("Erreur d'allocation de mémoire pour mat ...\n");
-        exit(0);
-    }
-
-    for(int i = 0; i < taille; i++){
-        mat[i] = malloc(sizeof(int) * taille);
-    }
-
-    for(int i = 0; i < taille; i++){
-        matrice_temp[i] = malloc(sizeof(int) * taille);
-    }
-
-    copier_matrice(0, 0,petite_matrice, mat, nInit); // matrice de base 2x2;
-
-    while(nInit < taille){
-        copier_matrice(nInit, 0,mat, mat,nInit);
-        copier_matrice(0, nInit,mat, mat,nInit);
-        inverser_matrice(mat, nInit, matrice_temp);
-        copier_matrice(nInit, nInit,matrice_temp, mat,nInit);
-        nInit*=2;
-    }
-
-    
-
-
-
-     
     return mat;
 }
+
+void detruire_matrice(int taille,int* matrice_Hadamard){
+  for (int i = 0; i < taille; i++){
+      free(matrice_Hadamard[i]);
+  }
+  free(matrice_Hadamard);
+}
+
+int* CreerMatrice(int tailleMatrice){
+  int * mat = AllocHadamard(tailleMatrice);
+
+  afficher_matrice(tailleMatrice, mat);
+  
+  int nbEtape = NombreEtapes(tailleMatrice);
+
+  int i = 0, j = 0;
+
+  if(nbEtape == 1){
+      mat[tailleMatrice * 0 + 0] = 1;
+  }else{
+      for(int i = 0; i < nbEtape; i++){
+          for(int j = 0; j < nbEtape; j++){
+              
+              // on ne s'occupe que de la première moitié verticale de la matrice 
+              if(i < (nbEtape / 2) ){
+                  if(j >= (nbEtape / 2)){
+                      mat[tailleMatrice * i + j] = mat[tailleMatrice * i + (j - (nbEtape / 2))];
+                  }else{
+                      
+                  }
+              }
+          }
+      }
+  }
+
+//   // Remplissage de la matrice
+//   while(tailleRemplissage <= tailleMatrice)
+//   {
+//       if(tailleRemplissage == 1)
+//         mat[tailleMatrice*0+0] = 1;
+//       else
+//       {
+//           for(i = 0 ; i < tailleRemplissage ; i++)
+//           {
+//               for(j = 0 ; j < tailleRemplissage ; j++)
+//               {
+//                   if(i < tailleRemplissage/2) // Première moitié horizontale
+//                   {
+//                       if(j >= tailleRemplissage / 2)
+//                         mat[tailleMatrice*i+j] = mat[tailleMatrice*i+(j-tailleRemplissage/2)]; // Seconde moitié verticale
+//                   }//fin if
+//                   else // Seconde moitié horizontale
+//                   {
+//                       if(j < tailleRemplissage/2) // Première moitié verticale
+//                         mat[tailleMatrice*i+j] = mat[tailleMatrice*(i-tailleRemplissage/2)+j];
+//                       else // Quart inférieur droit
+//                         mat[tailleMatrice*i+j] = - mat[tailleMatrice*(i-tailleRemplissage/2)+(j-tailleRemplissage/2)];
+//                   } //fin else
+//               } //fin for
+//             } //fin for
+//       } //fin else
+
+//       tailleRemplissage *= 2;
+
+//  } //fin while
+
+  return mat;    
+}
+
+
+
