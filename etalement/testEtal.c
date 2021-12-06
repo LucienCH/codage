@@ -5,7 +5,7 @@
 
 int main(int argc, char const *argv[])
 {
-    // char m1[] = {+1, -1, +1};
+    // char m1[] = {+1, -1, +1}; [1 -1 1 1] ==> [1 -1 1 1] [-1 1 -1 -1] 
 	// char m2[] = {-1, -1, +1};
 	// char m3[] = {-1, +1, +1};
 	// char m4[] = {+1, +1, -1};
@@ -18,10 +18,10 @@ int main(int argc, char const *argv[])
 
     printf("NBUser : %d \n nbEtapes %d \n", nbUser, nbEtapes);
 
-    int* matrice = CreerMatrice(nbUser);
-
-    afficher_matrice(nbUser, matrice);
+    int ** mat = CreerMatrice(nbUser);
+    AfficherMatrice(mat, nbUser);
     
-
+    HadaMatrice(mat, nbUser);
+    AfficherMatrice(mat, nbUser);
     return 0;
 }

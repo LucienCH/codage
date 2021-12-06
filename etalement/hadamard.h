@@ -1,16 +1,19 @@
 #ifndef _HADAMARD_H
 #define _HADAMARD_H
 
-// Verifie le nombre utilisateur
+// -- Verification du nombre d'utilisateur compris entre 1 et 16 -- 
 int NombreUtilisateurs();
 
-// Calcule le nombre détapes 
-int NombreEtapes(int nombreUtilisateur);
+// -- retourne le nombre d'étape --
+int NombreEtapes(int nombreUtilisateurs);
 
-// genere la matrice d'hadamard
-int* CreerMatrice(int tailleMatrice);
+// -- Permet d'allouer l'espace mémoire à la matrice -- 
+int ** CreerMatrice(int nbUser);
 
-void afficher_matrice(int taille, int* matrice_Hadamard);
+// -- Permet d'afficher la matrice donnée en paramètre -- 
+int AfficherMatrice(int ** mat, int tailleMat);
 
+// -- Permet d'appliquer l'algo d'Hadammar --
+int HadaMatrice(int ** mat, int nbUser);
 
 #endif

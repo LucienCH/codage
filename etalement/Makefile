@@ -1,14 +1,20 @@
+OBJS	= hadamard.o testEtal.o
+SOURCE	= hadamard.c testEtal.c
+HEADER	= hadamard.h
+OUT	= testEtal
+CC	 = gcc
+FLAGS	 = -g -c -Wall
+LFLAGS	 = -lm
 
-testEtal : testEtal.o hadamard.o
-	gcc testEtal.o hadamard.o -o testEtal
+all: $(OBJS)
+	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
 
-testEtal.o : testEtal.c 
-	gcc -c testEtal.c -o testEtal.o
+hadamard.o: hadamard.c
+	$(CC) $(FLAGS) hadamard.c 
 
-hadamard.o : hadamard.c hadamard.h
-	gcc -c hadamard.c -o hadamard.o
+testEtal.o: testEtal.c
+	$(CC) $(FLAGS) testEtal.c 
 
-all : testEtal
 
-clean : 
-	rm *.o
+clean:
+	rm -f $(OBJS) $(OUT)
