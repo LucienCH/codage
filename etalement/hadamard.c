@@ -1,142 +1,107 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <math.h>
+#include <string.h>
 
 #include "hadamard.h"
 
-// -- Verification du nombre d'utilisateur compris entre 1 et 16 -- 
-int NombreUtilisateurs()
-{
-    
-    int nbUser = 0;
-    int etat = 0;
+#define BINAIRE 2
 
-    int listUser[5] = {1,2,4,8,16};
+//calcul des étapes à effectuer
+static int calcul_etapes(int nb_utilisateurs){  //N = 2^p
 
-    // -- on vérifie que le nombre d'utilisateur est correct --
-    while(etat != 1){ 
-        printf("Saisir le nombre d'utilisateurs (1, 2, 4, 8 ou 16) : ");
-        scanf("%d", &nbUser);
-        for(int i = 0; i < 5; i++){
-            if(nbUser == listUser[i]){
-                etat = 1;
-            }
-        }
-        if(!etat) printf("Erreur dans la saisie du nombre d'utilisateur... \n");
-    }
-    return nbUser;
+  int nb_etape=0;
+  int n=0;
+
+  while(n < nb_utilisateurs){
+      n = pow(BINAIRE,nb_etape++);
+  }
+  return n;
 }
 
-// -- retourne le nombre d'étape --
-int NombreEtapes(int nombreUtilisateurs)
-{ 
-    int n = 0, nbEtapes = 0;
+void detruire_matrice(int taille,char** matrice_Hadamard){
 
-    while(n < nombreUtilisateurs){
-        nbEtapes++;
-        n = pow(2,nbEtapes);
+  for (int i = 0; i < taille; i++)
+      free(matrice_Hadamard[i]);
+
+  free(matrice_Hadamard);
+
+}
+void afficher_matrice(int taille,char** matrice_Hadamard){
+    printf("affichage de la matrice Hadamard\n\n");
+    for(int i=0; i< taille;i++){
+      for (int j=0; j < taille; j++) {
+          if(matrice_Hadamard[i][j]==-1)
+            printf(" %d  ",matrice_Hadamard[i][j]);
+          else
+            printf("  %d  ",matrice_Hadamard[i][j]);
+      }
+        printf("\n" );
     }
-    return nbEtapes;
 }
 
-// -- Permet d'afficher la matrice donnée en paramètre -- 
-int AfficherMatrice(int ** mat, int tailleMat)
-{
-    for(int i = 0; i < tailleMat; i++)
-    {
-        printf("|");
-        for(int j = 0; j < tailleMat; j++)
-        {
-            printf(" %2d |", mat[i][j]);
+void copier_matrice(int x, int y, char** matrice, char** matrice_finale, int n){
+    int i,j;
+  //  printf("%d\n",matrice_finale[i][j] );
+    int indice_x=x, indice_y=y;
+
+    for ( i=0; i < n; i++){
+
+        for ( j=0; j < n ; j++){
+
+              matrice_finale[indice_x][indice_y] = matrice[i][j];
+
+              indice_y++;
+
         }
-        printf("\n");
+        indice_y=y;
+        indice_x++;
+
     }
-    printf("\n\n");
-    return 1;
 }
 
+char** inverser_matrice(char ** mat_a_inverser, int taille, char** matrice_sortie){
 
-// -- Permet d'allouer l'espace mémoire à la matrice -- 
-int ** CreerMatrice(int nbUser)
-{
-    int ** mat;
+    for (int i = 0; i < taille; i++) {
+        for (int j = 0; j < taille; j++) {
 
-    printf("Tentative d'allocation de la matrice %d x %d ... \n", nbUser, nbUser);
-    
-    if( (mat = malloc(sizeof(int*) * nbUser)) == NULL)
-    {
-        perror("Erreur dans l'allocations de la matrice \n");
-        exit(EXIT_FAILURE);
-    }
-
-    for(int i = 0; i < nbUser; i++)
-    {
-        if( (mat[i] = malloc(sizeof(int*) * nbUser)) == NULL)
-        {
-            perror("Erreur dans l'allocations de la matrice \n");
-            exit(EXIT_FAILURE);
-        }
-        for(int j = 0; j < nbUser; j++)
-        {
-            mat[i][j] = -1;
+          matrice_sortie[i][j] = mat_a_inverser[i][j]* (-1);
         }
     }
-
-    printf("Allocation terminée avec succès ! \n");
-
-    return mat;
+    return matrice_sortie;
 }
 
-// -- Permet d'appliquer l'algo d'Hadammar --
-int HadaMatrice(int ** mat, int nbUser)
-{
-    int tailleRemplissage = 1;
-    int i = 0;
-    int j = 0;
+char** generer_hadamard(int nb_utilisateurs, int * taille_matrice_generee){
 
-    while(tailleRemplissage <= nbUser)
-    {
-        if(tailleRemplissage == 1)
-        {
-            mat[i][j] = 1;
-        }
-        else
-        {
-            for(i = 0; i < tailleRemplissage; i++)
-            {
-                for(j = 0; j < tailleRemplissage; j++)
-                {
-                    // -- première moitié horizontal --
-                    if(i < tailleRemplissage/2)
-                    {   
-                        // -- seconde matière vertical --
-                        if(j >= tailleRemplissage/2)
-                        {
-                            mat[i][j] = mat[i][j - tailleRemplissage/2];
-                        }
-                    }
-                    
-                    // -- seconde moitié horizontale --
-                    else
-                    {
-                        // -- première moitié verticale --
-                        if(j < tailleRemplissage/2)
-                        {
-                            mat[i][j] = mat[i - tailleRemplissage/2][j];
-                        }
-                        else
-                        {
-                            mat[i][j] = - mat[i - tailleRemplissage/2][j - tailleRemplissage/2];
-                        }
-                    }
-                }
-            }
-     
-        }
+  int n =calcul_etapes(nb_utilisateurs);  // matrice de nb_utilisateurs x nb_utilisateurs
+  int n_initial=1;
+  *taille_matrice_generee=n;
+  //matrices utilisées dans le programme
+  char** Ho = malloc(sizeof(*Ho)* n);
+  char** petite_matrice=malloc(sizeof(*Ho));  //matrice initiale
+  char ** matrice_temp=malloc(sizeof(*matrice_temp)*n); //
 
-        tailleRemplissage *= 2;
-        // -- fin du while --
+
+  //allocation des lignes des matrices
+  petite_matrice[0]=malloc(sizeof(*Ho));
+  petite_matrice[0][0]=1;
+  for(int i=0; i< n ;i++)
+     Ho[i] = malloc( sizeof(char) * n );
+  for(int i=0; i< n ;i++)
+    matrice_temp[i] = malloc( sizeof(char) * n );
+  //faire une boucle jusqu à atteindre le N
+    copier_matrice(0, 0,petite_matrice, Ho,n_initial);    //crée la matrice de base 2x2
+    while (n_initial < n) {
+
+        copier_matrice(n_initial, 0,Ho, Ho,n_initial);
+        copier_matrice(0, n_initial,Ho, Ho,n_initial);
+        inverser_matrice(Ho, n_initial, matrice_temp);
+        copier_matrice(n_initial, n_initial,matrice_temp, Ho,n_initial);
+        n_initial*=2;
     }
-    return 1;
-}
+    detruire_matrice(1,petite_matrice);
+    detruire_matrice(n,matrice_temp);
+    return Ho;
 
+}

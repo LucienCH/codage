@@ -1,19 +1,37 @@
-#ifndef _HADAMARD_H
-#define _HADAMARD_H
+#ifndef _HADAMARD_H_
+#define _HADAMARD_H_
 
-// -- Verification du nombre d'utilisateur compris entre 1 et 16 -- 
-int NombreUtilisateurs();
 
-// -- retourne le nombre d'étape --
-int NombreEtapes(int nombreUtilisateurs);
 
-// -- Permet d'allouer l'espace mémoire à la matrice -- 
-int ** CreerMatrice(int nbUser);
+/*
 
-// -- Permet d'afficher la matrice donnée en paramètre -- 
-int AfficherMatrice(int ** mat, int tailleMat);
-
-// -- Permet d'appliquer l'algo d'Hadammar --
-int HadaMatrice(int ** mat, int nbUser);
+ */
+ /*
+  * Cette fonction désalloue tout l'espace mémoire alloué
+  */
+void detruire_matrice(int ,char** );
+/*
+ * Affichage de la matrice générée
+ */
+void afficher_matrice(int,char** );
+/*
+ * Recopie une matrice de taille X[x,x] dans une matrice de taille supérieure Y[y,y]
+ * On recopie toujours l'inverse de la matrice [x,x] dans la 4è partie de la matrice Y en bas, à droite
+ *
+ */
+void copier_matrice(int , int, char** , char**, int );
+/*
+ * Fonction qui permet d'inverser une matrice A passée en paramètre
+ * et de remplir une matrice B contenant l'inverse
+ */
+char** inverser_matrice(char ** , int , char** );
+/*
+ * Génère la matrice de hadamard en accord avec le nombre d'utilisateur en paramètre
+ * Commence par calculer le nombre d'étapes p à effectuer "n"
+ * Crée 2 matrices de la taille finale attendue [nxn] et la matrice initiale qui contient "1", le premier bit
+ *
+ * On part de la matrice initiale de taille 1 jusqu à obtenir la matrice finale de Hadamard
+ */
+char** generer_hadamard(int, int* );
 
 #endif
